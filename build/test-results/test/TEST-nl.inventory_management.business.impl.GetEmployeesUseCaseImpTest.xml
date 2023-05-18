@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="nl.inventory_management.business.impl.GetEmployeesUseCaseImpTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2023-01-13T18:29:43" hostname="Servets-Air.home" time="0.006">
+  <properties/>
+  <testcase name="getAllEmployees_ShouldReturnAllUsersCreated()" classname="nl.inventory_management.business.impl.GetEmployeesUseCaseImpTest" time="0.002"/>
+  <testcase name="getEmployeeById_ShouldReturnAnEmployee()" classname="nl.inventory_management.business.impl.GetEmployeesUseCaseImpTest" time="0.0"/>
+  <testcase name="getEmployeeByName_ShouldReturnEmployeeNotFoundException()" classname="nl.inventory_management.business.impl.GetEmployeesUseCaseImpTest" time="0.0"/>
+  <testcase name="getEmployeeById_ShouldReturnEmployeeNotFoundException()" classname="nl.inventory_management.business.impl.GetEmployeesUseCaseImpTest" time="0.0"/>
+  <testcase name="getEmployeeByName_ShouldReturnAnEmployee()" classname="nl.inventory_management.business.impl.GetEmployeesUseCaseImpTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

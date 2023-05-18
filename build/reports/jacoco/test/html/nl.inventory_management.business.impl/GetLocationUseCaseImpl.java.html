@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetLocationUseCaseImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.business.impl</a> &gt; <span class="el_source">GetLocationUseCaseImpl.java</span></div><h1>GetLocationUseCaseImpl.java</h1><pre class="source lang-java linenums">package nl.inventory_management.business.impl;
+
+import lombok.AllArgsConstructor;
+import nl.inventory_management.business.conventer.LocationConverter;
+import nl.inventory_management.business.domain.Location;
+import nl.inventory_management.business.exception.LocationNotFoundException;
+import nl.inventory_management.business.interfaces.GetLocationUseCase;
+import nl.inventory_management.repository.LocationRepository;
+import nl.inventory_management.repository.entity.LocationEntity;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+
+@Service
+<span class="fc" id="L16">@AllArgsConstructor</span>
+@Transactional
+public class GetLocationUseCaseImpl implements GetLocationUseCase {
+    private final LocationRepository locationRepository;
+    @Override
+    public List&lt;Location&gt; getAllLocations() {
+<span class="fc" id="L22">        List&lt;LocationEntity&gt; entities = locationRepository.findAll();</span>
+<span class="fc" id="L23">        return entities.stream()</span>
+<span class="fc" id="L24">                .map(LocationConverter::convertToModel).toList();</span>
+    }
+    @Override
+    public Location getLocationById(Long id) {
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if(!locationRepository.existsById(id)){</span>
+<span class="fc" id="L29">            throw new LocationNotFoundException();</span>
+        }
+<span class="fc" id="L31">        LocationEntity entity = locationRepository.findById(id).orElse(null);</span>
+<span class="fc" id="L32">        return LocationConverter.convertToModel(entity);</span>
+
+    }
+
+    @Override
+    public Location getLocationByName(String name) {
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if(!locationRepository.existsByName(name)){</span>
+<span class="fc" id="L39">            throw new LocationNotFoundException();</span>
+        }
+<span class="fc" id="L41">        LocationEntity entity =  locationRepository.findByName(name);</span>
+<span class="fc" id="L42">        return LocationConverter.convertToModel(entity);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

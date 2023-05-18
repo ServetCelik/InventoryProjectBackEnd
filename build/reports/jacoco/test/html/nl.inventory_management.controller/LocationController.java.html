@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LocationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.controller</a> &gt; <span class="el_source">LocationController.java</span></div><h1>LocationController.java</h1><pre class="source lang-java linenums">package nl.inventory_management.controller;
+
+import lombok.RequiredArgsConstructor;
+import nl.inventory_management.business.exception.LocationNameAlreadyExistsException;
+import nl.inventory_management.business.interfaces.CreateLocationUseCase;
+import nl.inventory_management.business.interfaces.DeleteLocationUseCase;
+import nl.inventory_management.business.interfaces.GetLocationUseCase;
+import nl.inventory_management.business.interfaces.UpdateLocationUseCase;
+import nl.inventory_management.business.domain.Location;
+import nl.inventory_management.business.exception.LocationHasSomePalletsException;
+import nl.inventory_management.configuration.security.isauthenticated.IsAuthenticated;
+import nl.inventory_management.controller.converter.LocationConverter;
+import nl.inventory_management.controller.dto.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/location&quot;)
+<span class="fc" id="L24">@RequiredArgsConstructor</span>
+@CrossOrigin(&quot;http://localhost:3000&quot;)
+public class LocationController {
+    private final CreateLocationUseCase createLocationUseCase;
+    private final GetLocationUseCase getLocationUseCase;
+    private final DeleteLocationUseCase deleteLocationUseCase;
+    private final UpdateLocationUseCase updateLocationUseCase;
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_ADMIN&quot;})
+    @PostMapping(&quot;/save&quot;)
+    public ResponseEntity&lt;CreateLocationResponse&gt; createLocation(@RequestBody @Valid CreateLocationRequest createLocationRequest)  {
+<span class="fc" id="L35">        Location location = Location.builder()</span>
+<span class="fc" id="L36">                .name(createLocationRequest.getName())</span>
+<span class="fc" id="L37">                .address(createLocationRequest.getAddress())</span>
+<span class="fc" id="L38">                .maxPallet(createLocationRequest.getMaxPallet())</span>
+<span class="fc" id="L39">                .build();</span>
+
+<span class="fc" id="L41">        Location responseEntity = createLocationUseCase.createLocation(location);</span>
+<span class="fc" id="L42">        CreateLocationResponse response = LocationConverter.locationToCreateLocationResponse(responseEntity);</span>
+
+<span class="fc" id="L44">        return  ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+    }
+
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_ADMIN&quot;})
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;CreateLocationResponse&gt; updateLocation(@PathVariable(&quot;id&quot;) long id,@RequestBody @Valid UpdateLocationRequest request) {
+<span class="fc" id="L51">        Location location = Location.builder()</span>
+<span class="fc" id="L52">                .id(id)</span>
+<span class="fc" id="L53">                .name(request.getName())</span>
+<span class="fc" id="L54">                .address(request.getAddress())</span>
+<span class="fc" id="L55">                .maxPallet(request.getMaxPallet())</span>
+<span class="fc" id="L56">                .build();</span>
+
+<span class="fc" id="L58">        Location responseEntity = updateLocationUseCase.updateLocation(location);</span>
+<span class="fc" id="L59">        CreateLocationResponse response = LocationConverter.locationToCreateLocationResponse(responseEntity);</span>
+
+<span class="fc" id="L61">        return  ResponseEntity.status(HttpStatus.OK).body(response);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_ADMIN&quot;})
+    @GetMapping(&quot;/&quot;)
+    public ResponseEntity&lt;List&lt;GetLocationResponse&gt;&gt; getAllLocations(){
+
+<span class="fc" id="L68">        List&lt;Location&gt; responseEntityList = getLocationUseCase.getAllLocations();</span>
+<span class="fc" id="L69">        List&lt;GetLocationResponse&gt; response = responseEntityList.stream().map(LocationConverter::locationToGetLocationResponse).toList();</span>
+
+<span class="fc" id="L71">        return ResponseEntity.ok(response);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_ADMIN&quot;})
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;GetLocationResponse&gt; getLocation(@PathVariable Long id) {
+
+<span class="fc" id="L78">        Location responseEntity = getLocationUseCase.getLocationById(id);</span>
+<span class="fc" id="L79">        GetLocationResponse response = LocationConverter.locationToGetLocationResponse(responseEntity);</span>
+<span class="fc" id="L80">            return ResponseEntity.ok(response);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_ADMIN&quot;})
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;DeleteResponse&gt; deleteLocation(@PathVariable Long id) {
+
+<span class="fc" id="L87">        DeleteResponse response = deleteLocationUseCase.deleteLocation(id);</span>
+<span class="fc" id="L88">            return ResponseEntity.ok(response);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

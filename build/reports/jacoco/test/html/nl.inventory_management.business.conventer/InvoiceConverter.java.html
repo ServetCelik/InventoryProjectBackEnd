@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvoiceConverter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.business.conventer</a> &gt; <span class="el_source">InvoiceConverter.java</span></div><h1>InvoiceConverter.java</h1><pre class="source lang-java linenums">package nl.inventory_management.business.conventer;
+
+import nl.inventory_management.business.domain.Invoice;
+import nl.inventory_management.business.domain.Location;
+import nl.inventory_management.repository.entity.InvoiceEntity;
+import nl.inventory_management.repository.entity.LocationEntity;
+
+public final class InvoiceConverter {
+    private InvoiceConverter() {
+
+    }
+
+    public static Invoice convertToModel(InvoiceEntity invoice) {
+<span class="fc" id="L14">        return Invoice.builder()</span>
+<span class="fc" id="L15">                .id(invoice.getId())</span>
+<span class="fc" id="L16">                .productId((invoice.getProductId()))</span>
+<span class="fc" id="L17">                .productName(invoice.getProductName())</span>
+<span class="fc" id="L18">                .locationName(invoice.getLocationName())</span>
+<span class="fc" id="L19">                .amount(invoice.getAmount())</span>
+<span class="fc" id="L20">                .date(invoice.getDate())</span>
+<span class="fc" id="L21">                .build();</span>
+    }
+
+    public static InvoiceEntity convertToEntity(Invoice invoice) {
+<span class="nc" id="L25">        return InvoiceEntity.builder()</span>
+<span class="nc" id="L26">                .id(invoice.getId())</span>
+<span class="nc" id="L27">                .productId((invoice.getProductId()))</span>
+<span class="nc" id="L28">                .productName(invoice.getProductName())</span>
+<span class="nc" id="L29">                .locationName(invoice.getLocationName())</span>
+<span class="nc" id="L30">                .amount(invoice.getAmount())</span>
+<span class="nc" id="L31">                .date(invoice.getDate())</span>
+<span class="nc" id="L32">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PalletController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.controller</a> &gt; <span class="el_source">PalletController.java</span></div><h1>PalletController.java</h1><pre class="source lang-java linenums">package nl.inventory_management.controller;
+
+import lombok.RequiredArgsConstructor;
+import nl.inventory_management.business.domain.Location;
+import nl.inventory_management.business.domain.Pallet;
+import nl.inventory_management.business.domain.Product;
+import nl.inventory_management.business.interfaces.*;
+import nl.inventory_management.configuration.security.isauthenticated.IsAuthenticated;
+import nl.inventory_management.controller.converter.PalletConverter;
+import nl.inventory_management.controller.dto.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/pallet&quot;)
+<span class="fc" id="L23">@RequiredArgsConstructor</span>
+@CrossOrigin(&quot;http://localhost:3000&quot;)
+public class PalletController {
+    private final CreatePalletUseCase createPalletUseCase;
+    private final GetPalletUseCase getPalletUseCase;
+    private final DeletePalletUseCase deletePalletUseCase;
+    private final GetLocationUseCase getLocationUseCase;
+    private final GetProductUseCase getProductUseCase;
+    private final UpdatePalletUseCase updatePalletUseCase;
+    private final GetPalletStatisticsUseCase getPalletStatisticsUseCase;
+
+    @PostMapping(&quot;/save&quot;)
+    @PreAuthorize(&quot;hasRole('ADMIN')&quot;)
+    public ResponseEntity&lt;CreatePalletResponse&gt; createPallet(@RequestBody @Valid CreatePalletRequest createPalletRequest) {
+<span class="nc" id="L37">        Location loc = getLocationUseCase.getLocationByName(createPalletRequest.getLocationName());</span>
+<span class="nc" id="L38">        Product product = getProductUseCase.getProductByName(createPalletRequest.getProductName());</span>
+<span class="nc" id="L39">        Pallet pallet = Pallet.builder()</span>
+<span class="nc" id="L40">                .amount(createPalletRequest.getAmount())</span>
+<span class="nc" id="L41">                .location(loc)</span>
+<span class="nc" id="L42">                .product(product)</span>
+<span class="nc" id="L43">                .build();</span>
+
+<span class="nc" id="L45">        Pallet responseEntity = createPalletUseCase.createPallet(pallet);</span>
+<span class="nc" id="L46">        CreatePalletResponse response = PalletConverter.palletToCreatePalletResponse(responseEntity);</span>
+
+<span class="nc" id="L48">        return  ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_DEPOT_WORKER&quot;,&quot;ROLE_ADMIN&quot;})
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;CreatePalletResponse&gt; updatePallet(@PathVariable(&quot;id&quot;) long id,@RequestBody @Valid UpdatePalletRequest updatePalletRequest) {
+<span class="nc" id="L54">        Location loc = getLocationUseCase.getLocationByName(updatePalletRequest.getLocationName());</span>
+<span class="nc" id="L55">        Product product = getProductUseCase.getProductByName(updatePalletRequest.getProductName());</span>
+<span class="nc" id="L56">        Pallet pallet = Pallet.builder()</span>
+<span class="nc" id="L57">                .id(id)</span>
+<span class="nc" id="L58">                .amount(updatePalletRequest.getAmount())</span>
+<span class="nc" id="L59">                .location(loc)</span>
+<span class="nc" id="L60">                .product(product)</span>
+<span class="nc" id="L61">                .build();</span>
+
+<span class="nc" id="L63">        Pallet responseEntity = updatePalletUseCase.updatePallet(pallet);</span>
+<span class="nc" id="L64">        CreatePalletResponse response = PalletConverter.palletToCreatePalletResponse(responseEntity);</span>
+
+<span class="nc" id="L66">        return  ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_DEPOT_WORKER&quot;,&quot;ROLE_ADMIN&quot;})
+    @GetMapping(&quot;/&quot;)
+    public ResponseEntity&lt;List&lt;GetPalletResponse&gt;&gt; getAllPallets(){
+
+<span class="nc" id="L73">        List&lt;Pallet&gt; responseEntityList = getPalletUseCase.getAllPallets();</span>
+<span class="nc" id="L74">        List&lt;GetPalletResponse&gt; response = responseEntityList.stream().map(PalletConverter::palletToGetPalletResponse).toList();</span>
+
+<span class="nc" id="L76">        return ResponseEntity.ok(response);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_DEPOT_WORKER&quot;,&quot;ROLE_ADMIN&quot;})
+    @GetMapping(&quot;/byProduct/&quot;)
+    public ResponseEntity&lt;List&lt;TotalAmountOfProduct&gt;&gt; getAmountByProduct() {
+<span class="nc" id="L82">        List&lt;TotalAmountOfProduct&gt; list = getPalletStatisticsUseCase.getTotalProductsByProduct()</span>
+<span class="nc" id="L83">                .entrySet().stream().map(x-&gt;TotalAmountOfProduct.builder()</span>
+<span class="nc" id="L84">                        .product(x.getKey().getName()).amount(x.getValue()).build()).toList();</span>
+
+<span class="nc" id="L86">        return ResponseEntity.ok(list);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_DEPOT_WORKER&quot;,&quot;ROLE_ADMIN&quot;})
+    @GetMapping(&quot;/byLocation/&quot;)
+    public ResponseEntity&lt;List&lt;TotalProductInLocation&gt;&gt; getAmountByLocation() {
+<span class="nc" id="L92">        List&lt;TotalProductInLocation&gt; list = getPalletStatisticsUseCase.getTotalProductsByLocation()</span>
+<span class="nc" id="L93">                .entrySet().stream().map(x-&gt;TotalProductInLocation.builder()</span>
+<span class="nc" id="L94">                        .location(x.getKey().getName()).amount(x.getValue()).build()).toList();</span>
+
+<span class="nc" id="L96">        return ResponseEntity.ok(list);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_DEPOT_WORKER&quot;,&quot;ROLE_ADMIN&quot;})
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;GetPalletResponse&gt; getPallet(@PathVariable Long id) {
+<span class="nc" id="L102">        Pallet responseEntity = getPalletUseCase.getPalletById(id);</span>
+<span class="nc" id="L103">        GetPalletResponse response = PalletConverter.palletToGetPalletResponse(responseEntity);</span>
+<span class="nc" id="L104">        return ResponseEntity.ok(response);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_DEPOT_WORKER&quot;,&quot;ROLE_ADMIN&quot;})
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;DeleteResponse&gt; deletePallet(@PathVariable Long id) {
+<span class="nc" id="L110">        DeleteResponse response = deletePalletUseCase.deletePallet(id);</span>
+
+<span class="nc" id="L112">        return ResponseEntity.ok(response);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

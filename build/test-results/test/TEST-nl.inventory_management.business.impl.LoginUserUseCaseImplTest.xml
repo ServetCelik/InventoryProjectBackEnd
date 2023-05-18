@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="nl.inventory_management.business.impl.LoginUserUseCaseImplTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2023-01-13T18:29:43" hostname="Servets-Air.home" time="0.011">
+  <properties/>
+  <testcase name="loginUser_ShouldReturnInvalidCredentialsExceptionWhenPasswordsDontMatch()" classname="nl.inventory_management.business.impl.LoginUserUseCaseImplTest" time="0.01"/>
+  <testcase name="loginUser_ShouldReturnUserNotFoundExceptionWhenUserIsNull()" classname="nl.inventory_management.business.impl.LoginUserUseCaseImplTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

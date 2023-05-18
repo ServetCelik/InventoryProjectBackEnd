@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetFilteredProductsUseCaseImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.business.impl</a> &gt; <span class="el_source">GetFilteredProductsUseCaseImpl.java</span></div><h1>GetFilteredProductsUseCaseImpl.java</h1><pre class="source lang-java linenums">package nl.inventory_management.business.impl;
+
+import lombok.AllArgsConstructor;
+import nl.inventory_management.business.conventer.ProductConverter;
+import nl.inventory_management.business.domain.Product;
+import nl.inventory_management.business.interfaces.GetFilteredProductsUseCase;
+import nl.inventory_management.repository.ProductRepository;
+import nl.inventory_management.repository.entity.ProductEntity;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+<span class="fc" id="L16">@AllArgsConstructor</span>
+public class GetFilteredProductsUseCaseImpl implements GetFilteredProductsUseCase {
+    private final ProductRepository productRepository;
+    @Transactional
+    @Override
+    public List&lt;Product&gt; getFilteredProducts(String filterName, String filterDescription, String filterDepartment) {
+
+<span class="fc" id="L23">        String blank = &quot;blank&quot;;</span>
+<span class="fc" id="L24">        List&lt;ProductEntity&gt; productList = null;</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        String name = filterName.equals(blank) ? &quot;&quot; : filterName;</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        String description = filterDescription.equals(blank) ? &quot;&quot; : filterDescription;</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        String department = filterDepartment.equals(blank) ? &quot;&quot; : filterDepartment;</span>
+
+<span class="pc bpc" id="L29" title="5 of 6 branches missed.">        if (name.isBlank()&amp;&amp;description.isBlank()&amp;&amp;department.isBlank()){</span>
+<span class="nc" id="L30">            productList  = productRepository.findAll();</span>
+
+<span class="pc bpc" id="L32" title="3 of 6 branches missed.">        } else if (!name.isBlank() &amp;&amp; description.isBlank() &amp;&amp; department.isBlank()) {</span>
+<span class="fc" id="L33">            productList  = productRepository.findByNameContaining(name);</span>
+
+<span class="nc bnc" id="L35" title="All 6 branches missed.">        } else if (!name.isBlank() &amp;&amp; !description.isBlank() &amp;&amp; department.isBlank()) {</span>
+<span class="nc" id="L36">            productList  = productRepository.findByNameContainingAndDescriptionContaining(name, description);</span>
+
+<span class="nc bnc" id="L38" title="All 6 branches missed.">        }else if (!name.isBlank() &amp;&amp; description.isBlank() &amp;&amp; !department.isBlank()) {</span>
+<span class="nc" id="L39">            productList  = productRepository.findByNameContainingAndDepartmentEntity_NameContaining(name,department);</span>
+
+<span class="nc bnc" id="L41" title="All 6 branches missed.">        }else if (!name.isBlank() &amp;&amp; !description.isBlank() &amp;&amp; !department.isBlank()) {</span>
+<span class="nc" id="L42">            productList  = productRepository.findByNameContainingAndDescriptionContainingAndDepartmentEntity_NameContaining(name,description,department);</span>
+
+<span class="nc bnc" id="L44" title="All 6 branches missed.">        }else if (name.isBlank() &amp;&amp; !description.isBlank() &amp;&amp; department.isBlank()) {</span>
+<span class="nc" id="L45">            productList  = productRepository.findByDescriptionContaining(description);</span>
+
+<span class="nc bnc" id="L47" title="All 6 branches missed.">        }else if (name.isBlank() &amp;&amp;description.isBlank() &amp;&amp; !department.isBlank()) {</span>
+<span class="nc" id="L48">            productList  = productRepository.findByDepartmentEntity_NameContaining(department);</span>
+
+<span class="nc bnc" id="L50" title="All 6 branches missed.">        }else if (name.isBlank() &amp;&amp; !description.isBlank() &amp;&amp; !department.isBlank()) {</span>
+<span class="nc" id="L51">            productList  = productRepository.findByDescriptionContainingAndDepartmentEntity_NameContaining(description,department);</span>
+
+        }else{
+<span class="nc" id="L54">            productList = new ArrayList&lt;&gt;();</span>
+        }
+
+
+<span class="fc" id="L58">        return productList.stream()</span>
+<span class="fc" id="L59">                .map(ProductConverter::convertToModel).toList();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

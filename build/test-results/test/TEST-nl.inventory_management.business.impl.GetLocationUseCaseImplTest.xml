@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="nl.inventory_management.business.impl.GetLocationUseCaseImplTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2023-01-13T18:29:43" hostname="Servets-Air.home" time="0.005">
+  <properties/>
+  <testcase name="getLocationById_ShouldReturnAnObject()" classname="nl.inventory_management.business.impl.GetLocationUseCaseImplTest" time="0.001"/>
+  <testcase name="getAllLocations_ShouldReturnAllLocationsCreated()" classname="nl.inventory_management.business.impl.GetLocationUseCaseImplTest" time="0.001"/>
+  <testcase name="getLocationByName_ShouldReturnAnObject()" classname="nl.inventory_management.business.impl.GetLocationUseCaseImplTest" time="0.001"/>
+  <testcase name="getLocationByName_ShouldReturnLocationNotFoundException()" classname="nl.inventory_management.business.impl.GetLocationUseCaseImplTest" time="0.001"/>
+  <testcase name="getLocationById_ShouldReturnLocationNotFoundException()" classname="nl.inventory_management.business.impl.GetLocationUseCaseImplTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetInvoiceUseCaseImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.business.impl</a> &gt; <span class="el_source">GetInvoiceUseCaseImpl.java</span></div><h1>GetInvoiceUseCaseImpl.java</h1><pre class="source lang-java linenums">package nl.inventory_management.business.impl;
+
+import lombok.AllArgsConstructor;
+import nl.inventory_management.business.conventer.InvoiceConverter;
+import nl.inventory_management.business.conventer.LocationConverter;
+import nl.inventory_management.business.domain.Invoice;
+import nl.inventory_management.business.domain.Location;
+import nl.inventory_management.business.exception.LocationNotFoundException;
+import nl.inventory_management.business.interfaces.GetInvoiceUseCase;
+import nl.inventory_management.business.interfaces.GetLocationUseCase;
+import nl.inventory_management.repository.InvoiceRepository;
+import nl.inventory_management.repository.LocationRepository;
+import nl.inventory_management.repository.entity.InvoiceEntity;
+import nl.inventory_management.repository.entity.LocationEntity;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.util.Formatter;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@Service
+<span class="fc" id="L29">@AllArgsConstructor</span>
+@Transactional
+public class GetInvoiceUseCaseImpl implements GetInvoiceUseCase {
+    private final InvoiceRepository invoiceRepository;
+    @Override
+    public List&lt;Invoice&gt; getAllInvoices() {
+<span class="fc" id="L35">        List&lt;InvoiceEntity&gt; entities = invoiceRepository.findAll();</span>
+<span class="fc" id="L36">        return entities.stream()</span>
+<span class="fc" id="L37">                .map(InvoiceConverter::convertToModel).toList();</span>
+    }
+    @Override
+    public List&lt;String&gt; getStatisticByByProductId(Long id,String start,String end) {
+        LocalDateTime startDate;
+        LocalDateTime endDate;
+        try{
+<span class="fc" id="L44">            startDate = LocalDateTime.parse(start);</span>
+<span class="fc" id="L45">            endDate = LocalDateTime.parse(end);</span>
+<span class="nc" id="L46">        }catch (Exception e){</span>
+<span class="nc" id="L47">            return Stream.of(</span>
+                            &quot;Pls&quot;
+                            , &quot; Select&quot;
+                            , &quot;Another&quot;
+                            , &quot;Dates&quot;)
+<span class="nc" id="L52">                    .collect(Collectors.toList());</span>
+<span class="fc" id="L53">        }</span>
+
+
+<span class="fc" id="L56">        List&lt;Invoice&gt; allInvoices = invoiceRepository.findAll()</span>
+<span class="fc" id="L57">                .stream().map(InvoiceConverter::convertToModel).toList();</span>
+<span class="fc" id="L58">        return getInfo(allInvoices,id,startDate,endDate);</span>
+
+    }
+
+    private List&lt;String&gt; getInfo(List&lt;Invoice&gt; invoices,Long id,LocalDateTime start, LocalDateTime end){
+        try{
+<span class="fc" id="L64">        String productName =invoices.stream()</span>
+<span class="fc" id="L65">                .filter(x-&gt;x.getProductId().equals(id) &amp; x.getDate().isAfter(start) &amp; x.getDate().isBefore(end))</span>
+<span class="fc" id="L66">                .findFirst().get().getProductName();</span>
+
+<span class="fc" id="L68">        Integer totalAmountOfProduct = invoices.stream()</span>
+<span class="fc" id="L69">                .filter(x-&gt;x.getProductId().equals(id)&amp; x.getDate().isAfter(start) &amp; x.getDate().isBefore(end))</span>
+<span class="fc" id="L70">                .map(x-&gt;x.getAmount())</span>
+<span class="fc" id="L71">                .reduce(0, (subtotal, element) -&gt; subtotal + element);</span>
+
+<span class="fc" id="L73">        Integer totalAmountOfGeneral = invoices.stream()</span>
+<span class="fc" id="L74">                .filter(x-&gt; x.getDate().isAfter(start) &amp; x.getDate().isBefore(end))</span>
+<span class="fc" id="L75">                .map(x-&gt;x.getAmount())</span>
+<span class="fc" id="L76">                .reduce(0, (subtotal, element) -&gt; subtotal + element);</span>
+
+<span class="fc" id="L78">        long totalCount = invoices.stream()</span>
+<span class="fc" id="L79">                .filter(x-&gt;x.getProductId().equals(id)&amp; x.getDate().isAfter(start) &amp; x.getDate().isBefore(end))</span>
+<span class="fc" id="L80">                .count();</span>
+<span class="fc" id="L81">        long totalCountGeneral = invoices.stream()</span>
+<span class="fc" id="L82">                .filter(x-&gt; x.getDate().isAfter(start) &amp; x.getDate().isBefore(end))</span>
+<span class="fc" id="L83">                .count();</span>
+
+<span class="fc" id="L85">        long amountPerTransactionProduct = totalAmountOfProduct/totalCount;</span>
+
+<span class="fc" id="L87">        long amountPerTransactionGeneral = totalAmountOfGeneral/totalCountGeneral;</span>
+
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        String difference = amountPerTransactionProduct &gt; amountPerTransactionGeneral ?</span>
+<span class="nc" id="L90">                amountPerTransactionProduct-amountPerTransactionGeneral + &quot; more &quot; :</span>
+<span class="fc" id="L91">                amountPerTransactionGeneral-amountPerTransactionProduct + &quot; less &quot;;</span>
+
+<span class="fc" id="L93">        return Stream.of(</span>
+                &quot;There are total &quot;+ totalCount +&quot; transactions with &quot; + productName + &quot; in given dates.&quot;
+                        , &quot; The total amount of the transaction is &quot; + totalAmountOfProduct + &quot;.&quot;
+                        , &quot;Which means there are &quot; + amountPerTransactionProduct + &quot; items per transaction.&quot;
+                        , &quot;That means its &quot; + difference+ &quot;than general average&quot;)
+<span class="fc" id="L98">                .collect(Collectors.toList());}</span>
+<span class="nc" id="L99">        catch (Exception e){</span>
+<span class="nc" id="L100">            return Stream.of(</span>
+                            &quot;nothing&quot;
+                            , &quot; found&quot;
+                            , &quot;with given&quot;
+                            , &quot;data&quot;)
+<span class="nc" id="L105">                    .collect(Collectors.toList());}</span>
+        }
+
+
+    }
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PalletEntity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.repository.entity</a> &gt; <span class="el_source">PalletEntity.java</span></div><h1>PalletEntity.java</h1><pre class="source lang-java linenums">package nl.inventory_management.repository.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = &quot;pallet&quot;)
+<span class="pc" id="L13">@Builder</span>
+<span class="pc bpc" id="L14" title="20 of 32 branches missed.">@Data</span>
+<span class="fc" id="L15">@AllArgsConstructor</span>
+<span class="fc" id="L16">@NoArgsConstructor</span>
+public class PalletEntity {
+    @Id
+    @Column(name = &quot;id&quot;)
+    @GeneratedValue(strategy= GenerationType.AUTO)
+<span class="fc" id="L21">    private Long id;</span>
+
+    @Column(name = &quot;amount&quot;)
+<span class="fc" id="L24">    private int amount;</span>
+
+    @NotNull
+    @ManyToOne(fetch=FetchType.EAGER,
+            cascade= { CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+//    CascadeType.PERSIST &lt;-- When I add this cascade type i get an PersistentObjectException
+    @JoinColumn(name = &quot;location_id&quot;)
+<span class="fc" id="L32">    private LocationEntity locationEntity;</span>
+
+
+    @OneToOne(fetch=FetchType.EAGER,
+            cascade= {CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name=&quot;product_id&quot;)
+<span class="fc" id="L39">    private ProductEntity productEntity;</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    Regulations for approve Euro pallets
+//    Euro pallets are manufactured according to strict quality regulation and are occasionally inspected by independent firms. All pallets should meet certain criteria before being approved.
+//
+//    The absence of an approval logo indicates a counterfeit pallet, which can cause damage to the product transported or handled by it.
+//    Transporting products on an unauthentic pallet can lead to refusal of products by customers or sometimes serious penalties from authorities. Other requirements include:
+//
+//    Materials:  11 tables in high-quality wood, 9 solid woodblock, and 78 nails.
+//    Euro pallet Dimensions: Length 1200 mmm (tolerance limit + 8/-5); Width 800mm (tolerance limit + 8/- 5x mm); Height 144mm (tolerance limit + 10/ - 0x mm)
+//    Max Height: 2.2 meter
+//    Weight: approximately 25kg.
+//    Workload: 1500kg with a constant load on the entire pallet.
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

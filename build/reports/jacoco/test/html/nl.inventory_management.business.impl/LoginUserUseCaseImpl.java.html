@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginUserUseCaseImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.business.impl</a> &gt; <span class="el_source">LoginUserUseCaseImpl.java</span></div><h1>LoginUserUseCaseImpl.java</h1><pre class="source lang-java linenums">package nl.inventory_management.business.impl;
+
+import lombok.AllArgsConstructor;
+import nl.inventory_management.business.interfaces.AccessTokenEncoder;
+import nl.inventory_management.business.interfaces.LoginUserUseCase;
+import nl.inventory_management.business.conventer.UserConverter;
+import nl.inventory_management.business.exception.InvalidCredentialsException;
+import nl.inventory_management.business.exception.UserNotFoundException;
+import nl.inventory_management.business.domain.AccessToken;
+import nl.inventory_management.repository.UserRepository;
+import nl.inventory_management.business.domain.User;
+import nl.inventory_management.repository.entity.UserEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+<span class="fc" id="L19">@AllArgsConstructor</span>
+public class LoginUserUseCaseImpl implements LoginUserUseCase {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AccessTokenEncoder accessTokenEncoder;
+    @Override
+    public String loginUser(String name,String password){
+        User user ;
+
+        try{
+<span class="fc" id="L30">            user = findUser(name);</span>
+<span class="fc" id="L31">        }catch (NullPointerException e){</span>
+<span class="fc" id="L32">            throw new UserNotFoundException();</span>
+<span class="fc" id="L33">        }</span>
+
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if (!matchesPassword(password, user.getPassword())) {</span>
+<span class="fc" id="L36">            throw new InvalidCredentialsException();</span>
+        }
+
+<span class="nc" id="L39">        return generateAccessToken(user);</span>
+    }
+    private User findUser(String name){
+
+<span class="fc" id="L43">        UserEntity entity = userRepository.findByUserName(name);</span>
+<span class="fc" id="L44">        return UserConverter.convertToModel(entity);</span>
+    }
+    private boolean matchesPassword(String rawPassword, String encodedPassword) {
+<span class="fc" id="L47">        return passwordEncoder.matches(rawPassword, encodedPassword);</span>
+    }
+    private String generateAccessToken(User user) {
+<span class="nc" id="L50">        Long userId = user.getId();</span>
+<span class="nc" id="L51">        List&lt;String&gt; roles = user.getEmployee().getRoles().stream()</span>
+<span class="nc" id="L52">                .map(userRole -&gt; userRole.getRole().toString())</span>
+<span class="nc" id="L53">                .toList();</span>
+
+<span class="nc" id="L55">        return accessTokenEncoder.encode(</span>
+<span class="nc" id="L56">                AccessToken.builder()</span>
+<span class="nc" id="L57">                        .subject(user.getUserName())</span>
+<span class="nc" id="L58">                        .roles(roles)</span>
+<span class="nc" id="L59">                        .userId(userId)</span>
+<span class="nc" id="L60">                        .build());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

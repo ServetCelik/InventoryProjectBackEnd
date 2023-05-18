@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateProductUseCaseImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.business.impl</a> &gt; <span class="el_source">CreateProductUseCaseImpl.java</span></div><h1>CreateProductUseCaseImpl.java</h1><pre class="source lang-java linenums">package nl.inventory_management.business.impl;
+
+import lombok.AllArgsConstructor;
+import nl.inventory_management.business.interfaces.CreateProductUseCase;
+import nl.inventory_management.business.conventer.ProductConverter;
+import nl.inventory_management.business.domain.Product;
+import nl.inventory_management.business.exception.ProductNameAlreadyExistsException;
+import nl.inventory_management.business.exception.UnsupportedProductFieldsException;
+import nl.inventory_management.repository.ProductRepository;
+import nl.inventory_management.repository.entity.ProductEntity;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+
+@Service
+<span class="fc" id="L16">@AllArgsConstructor</span>
+public class CreateProductUseCaseImpl implements CreateProductUseCase {
+    private final ProductRepository productRepository;
+    @Transactional
+    @Override
+    public Product createProduct(Product request) {
+
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if (productRepository.existsByName(request.getName())){</span>
+<span class="fc" id="L24">            throw new ProductNameAlreadyExistsException();</span>
+        }
+<span class="pc bpc" id="L26" title="1 of 4 branches missed.">        if(request.getName().length()&lt;2||request.getName().length()&gt;50||</span>
+<span class="pc bpc" id="L27" title="2 of 4 branches missed.">                request.getDescription().length()&lt;2||request.getDescription().length()&gt;500){</span>
+<span class="fc" id="L28">            throw new UnsupportedProductFieldsException();</span>
+        }
+
+<span class="fc" id="L31">        return save(request);</span>
+    }
+
+    private Product save(Product product){
+<span class="fc" id="L35">        ProductEntity entity = ProductConverter.convertToEntity(product);</span>
+<span class="fc" id="L36">        ProductEntity respond = productRepository.save(entity);</span>
+<span class="fc" id="L37">        return ProductConverter.convertToModel(respond);</span>
+
+    }
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

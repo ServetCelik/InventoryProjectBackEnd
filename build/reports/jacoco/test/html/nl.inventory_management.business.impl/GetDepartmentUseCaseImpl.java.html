@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetDepartmentUseCaseImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.business.impl</a> &gt; <span class="el_source">GetDepartmentUseCaseImpl.java</span></div><h1>GetDepartmentUseCaseImpl.java</h1><pre class="source lang-java linenums">package nl.inventory_management.business.impl;
+
+import lombok.AllArgsConstructor;
+import nl.inventory_management.business.conventer.DepartmentConverter;
+import nl.inventory_management.business.domain.Department;
+import nl.inventory_management.business.exception.DepartmentNotFoundException;
+import nl.inventory_management.business.interfaces.GetDepartmentUseCase;
+import nl.inventory_management.repository.DepartmentRepository;
+import nl.inventory_management.repository.entity.DepartmentEntity;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+
+@Service
+<span class="fc" id="L16">@AllArgsConstructor</span>
+@Transactional
+public class GetDepartmentUseCaseImpl implements GetDepartmentUseCase {
+    private final DepartmentRepository departmentRepository;
+
+    @Override
+    public List&lt;Department&gt; getAllDepartments() {
+<span class="fc" id="L23">        List&lt;DepartmentEntity&gt; departmentEntities = departmentRepository.findAll();</span>
+<span class="fc" id="L24">        return departmentEntities.stream()</span>
+<span class="fc" id="L25">                .map(DepartmentConverter::convertToModel).toList();</span>
+    }
+    @Override
+    public Department getDepartmentById(Long id) {
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if(!departmentRepository.existsById(id)){</span>
+<span class="fc" id="L30">            throw new DepartmentNotFoundException();</span>
+        }
+<span class="fc" id="L32">        DepartmentEntity entity = departmentRepository.findById(id).orElse(null);</span>
+<span class="fc" id="L33">        return DepartmentConverter.convertToModel(entity);</span>
+    }
+    @Override
+    public Department findDepartmentByName(String name) {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if(!departmentRepository.existsByName(name)){</span>
+<span class="fc" id="L38">            throw new DepartmentNotFoundException();</span>
+        }
+<span class="fc" id="L40">        DepartmentEntity entity = departmentRepository.findByName(name);</span>
+<span class="fc" id="L41">        return DepartmentConverter.convertToModel(entity);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

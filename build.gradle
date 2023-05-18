@@ -1,0 +1,130 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.4'
+    id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+    id 'jacoco'
+    id 'java'
+    id "org.sonarqube" version "3.4.0.2513"
+}
+
+group = 'org.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.flywaydb:flyway-core:9.1.6'
+    implementation 'org.flywaydb:flyway-mysql:9.1.6'
+    implementation 'mysql:mysql-connector-java:8.0.30'
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.1.1'
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.10'
+    implementation ('org.springframework.boot:spring-boot-starter-websocket')
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+//    testImplementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:3.1.5'
+//    testImplementation 'com.playtika.testcontainers:embedded-mysql:2.2.11'
+   // testImplementation 'net.java.dev.jna:jna-platform:5.7.0'
+    //testRuntimeOnly 'com.h2database:h2'
+
+    //compile 'io.ebean:ebean:13.6.5'
+    //annotationProcessor 'io.ebean:querybean-generator:13.6.5'
+    //testCompile 'io.ebean:ebean-test:13.6.5'
+}
+tasks.named('sonarqube').configure{
+    dependsOn jacocoTestReport;
+}
+
+
+//sonarqube {
+//    properties {
+//        property "sonar.projectKey", "I489394_inventorymanagementsystem_AYSl_NOQ4yL6-yrOK2Gx"
+//        property "sonar.qualitygate.wait", true
+//    }
+//}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+test.finalizedBy jacocoTestReport
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+//test {
+//    useJUnitPlatform()
+//}
+
+
+//group 'org.example'
+
+//Not yukaridaki test yerine bu girilebilir
+//test {
+//    useJUnitPlatform()
+//    finalizedBy jacocoTestReport
+//}
+//
+//jacocoTestReport {
+//    dependsOn test
+//    reports {
+//        xml.enabled true
+//    }
+//    afterEvaluate {
+//        classDirectories.setFrom(files(classDirectories.files.collect {
+//            fileTree(dir: it, exclude: [
+//                    "**/configuration/*"
+//            ])
+//        }))
+//    }
+//}
+
+
+//sonarqube {
+//    properties {
+//        property "sonar.projectKey", "I489394_inventorymanagementsystem_AYQ63jnjNd12Ogjbo4P_"
+//        property "sonar.qualitygate.wait", true
+//        property "sonar.scm.disabled", "true" //I added this line to make sonar work and it changed sth
+//    }
+//}
+
+//sonarqube {
+//    properties {
+//        property "sonar.projectKey", "inventory"
+//        property "sonar.qualitygate.wait", true
+//    }
+//}
+
+//I commmented out this to see if works
+//tasks.named('test') {
+//    useJUnitPlatform()
+//}
+
+//sonarqube {
+//    properties {
+//        property "sonar.projectKey", "servet"
+//        property "sonar.qualitygate.wait", true
+//    }
+//}

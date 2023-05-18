@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmployeeController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.controller</a> &gt; <span class="el_source">EmployeeController.java</span></div><h1>EmployeeController.java</h1><pre class="source lang-java linenums">package nl.inventory_management.controller;
+
+import lombok.RequiredArgsConstructor;
+import nl.inventory_management.business.interfaces.GetEmployeeUseCase;
+import nl.inventory_management.business.interfaces.GetFilteredEmployeesUseCase;
+import nl.inventory_management.business.interfaces.UpdateEmployeeRoleUseCase;
+import nl.inventory_management.business.domain.Employee;
+import nl.inventory_management.business.domain.EmployeeRole;
+import nl.inventory_management.business.domain.RoleEnum;
+import nl.inventory_management.configuration.security.isauthenticated.IsAuthenticated;
+import nl.inventory_management.controller.converter.EmployeeConverter;
+import nl.inventory_management.controller.dto.GetEmployeeResponse;
+import nl.inventory_management.controller.dto.UpdateRoleRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping(&quot;/employee&quot;)
+<span class="fc" id="L24">@RequiredArgsConstructor</span>
+@CrossOrigin(&quot;http://localhost:3000&quot;)
+public class EmployeeController {
+    private final GetEmployeeUseCase getEmployeeUseCase;
+    private final UpdateEmployeeRoleUseCase updateEmployeeRoleUseCase;
+    private final GetFilteredEmployeesUseCase getFilteredEmployeesUseCase;
+
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_HR&quot;})
+    @GetMapping(&quot;/&quot;)
+    public ResponseEntity&lt;List&lt;GetEmployeeResponse&gt;&gt; getAllEmployees() {
+
+<span class="nc" id="L36">        List&lt;Employee&gt; responseEntityList = getEmployeeUseCase.getAllEmployees();</span>
+<span class="nc" id="L37">        List&lt;GetEmployeeResponse&gt; response = responseEntityList</span>
+<span class="nc" id="L38">                .stream().map(EmployeeConverter::employeeToGetEmployeeResponse).toList();</span>
+
+<span class="nc" id="L40">        return ResponseEntity.ok(response);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_HR&quot;})
+    @GetMapping(&quot;/filter/{name}/{lastName}/{email}/{role}&quot;)
+    public ResponseEntity&lt;List&lt;GetEmployeeResponse&gt;&gt; getFilteredEmployees(@PathVariable String name, @PathVariable String lastName, @PathVariable String email, @PathVariable String role) {
+
+<span class="nc" id="L47">        List&lt;Employee&gt; responseEntityList = getFilteredEmployeesUseCase.getFilteredEmployees(name,lastName,email,role);</span>
+<span class="nc" id="L48">        List&lt;GetEmployeeResponse&gt; response = responseEntityList</span>
+<span class="nc" id="L49">                .stream().map(EmployeeConverter::employeeToGetEmployeeResponse).toList();</span>
+
+<span class="nc" id="L51">        return ResponseEntity.ok(response);</span>
+    }
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_HR&quot;})
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;GetEmployeeResponse&gt; getEmployeeById(@PathVariable Long id) {
+
+<span class="nc" id="L58">        Employee responseEntity = getEmployeeUseCase.getEmployeeById(id);</span>
+<span class="nc" id="L59">        GetEmployeeResponse response = EmployeeConverter.employeeToGetEmployeeResponse(responseEntity);</span>
+<span class="nc" id="L60">        return ResponseEntity.ok(response);</span>
+    }
+
+
+    @IsAuthenticated
+    @RolesAllowed({&quot;ROLE_HR&quot;})
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;GetEmployeeResponse&gt; updateEmployeeRole(@PathVariable(&quot;id&quot;) long id,@RequestBody @Valid UpdateRoleRequest request) {
+
+<span class="nc" id="L69">        Employee responseEntity = getEmployeeUseCase.getEmployeeById(id);</span>
+<span class="nc" id="L70">        responseEntity.setRoles(request.getRoles().stream().map(x -&gt; EmployeeRole.builder().role(RoleEnum.valueOf(x)).build()).collect(Collectors.toSet()));</span>
+<span class="nc" id="L71">        Employee employee = updateEmployeeRoleUseCase.updateRole(responseEntity);</span>
+<span class="nc" id="L72">        GetEmployeeResponse response = EmployeeConverter.employeeToGetEmployeeResponse(employee);</span>
+<span class="nc" id="L73">        return ResponseEntity.ok(response);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,54 @@
+version: '3'
+services:
+  #MySQL Service
+  db:
+    platform: linux/arm64/v8
+    image: mysql
+    container_name: db555
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    tty: true
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_ROOT_PASSWORD: Baschat_123
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      #      - Create an empty db
+      - ./init:/docker-entrypoint-initdb.d
+      #      - feed the db with data in db folder
+      - dbdata:/var/lib/mysql
+      #      - db config
+      # - ./local/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+
+  #Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: backend555
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8080:8080"
+    environment:
+      SERVICE_TAGS: dev
+      SERVICE_NAME: backend3
+    volumes:
+      - ./:/app
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+#Volumes
+volumes:
+  dbdata:
+    driver: local

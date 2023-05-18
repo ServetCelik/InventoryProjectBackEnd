@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DeleteProductUseCaseImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.business.impl</a> &gt; <span class="el_source">DeleteProductUseCaseImpl.java</span></div><h1>DeleteProductUseCaseImpl.java</h1><pre class="source lang-java linenums">package nl.inventory_management.business.impl;
+
+import lombok.AllArgsConstructor;
+import nl.inventory_management.business.interfaces.DeleteProductUseCase;
+import nl.inventory_management.business.exception.ProductExistsInSomePalletsException;
+import nl.inventory_management.business.exception.ProductNotFoundException;
+import nl.inventory_management.controller.dto.DeleteResponse;
+import nl.inventory_management.repository.PalletRepository;
+import nl.inventory_management.repository.ProductRepository;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+
+@Service
+<span class="fc" id="L15">@AllArgsConstructor</span>
+public class DeleteProductUseCaseImpl implements DeleteProductUseCase {
+    private final ProductRepository productRepository;
+    private final PalletRepository palletRepository;
+    @Transactional
+    @Override
+    public DeleteResponse deleteProduct(Long id) {
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if (!productRepository.existsById(id)){</span>
+<span class="nc" id="L23">            throw  new ProductNotFoundException();</span>
+        }
+<span class="fc" id="L25">        boolean isExists = palletRepository.existsByProductEntity(productRepository.findById(id));</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if(isExists){</span>
+<span class="nc" id="L27">            throw new ProductExistsInSomePalletsException();</span>
+        }
+<span class="fc" id="L29">        delete(id);</span>
+
+<span class="fc" id="L31">        return DeleteResponse.builder()</span>
+<span class="fc" id="L32">                .result(&quot;Product with id:&quot; + id + &quot;is deleted...&quot;)</span>
+<span class="fc" id="L33">                .build();</span>
+    }
+
+    private void delete(Long id){
+<span class="fc" id="L37">         productRepository.deleteById(id);</span>
+<span class="fc" id="L38">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

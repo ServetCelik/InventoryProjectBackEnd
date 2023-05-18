@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvoiceConverter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">InventoryManagementSystem</a> &gt; <a href="index.source.html" class="el_package">nl.inventory_management.controller.converter</a> &gt; <span class="el_source">InvoiceConverter.java</span></div><h1>InvoiceConverter.java</h1><pre class="source lang-java linenums">package nl.inventory_management.controller.converter;
+
+import nl.inventory_management.business.domain.Invoice;
+import nl.inventory_management.business.domain.Location;
+import nl.inventory_management.controller.dto.CreateLocationResponse;
+import nl.inventory_management.controller.dto.GetInvoiceResponse;
+import nl.inventory_management.controller.dto.GetLocationResponse;
+
+public final class InvoiceConverter {
+    private InvoiceConverter(){
+
+    }
+    public static GetInvoiceResponse InvoiceToGetInvoiceResponse(Invoice invoice) {
+<span class="nc" id="L14">       return    GetInvoiceResponse.builder()</span>
+<span class="nc" id="L15">                .id(invoice.getId())</span>
+<span class="nc" id="L16">                .productId((invoice.getProductId()))</span>
+<span class="nc" id="L17">                .productName(invoice.getProductName())</span>
+<span class="nc" id="L18">                .locationName(invoice.getLocationName())</span>
+<span class="nc" id="L19">                .amount(invoice.getAmount())</span>
+<span class="nc" id="L20">                .date(invoice.getDate())</span>
+<span class="nc" id="L21">                .build();</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

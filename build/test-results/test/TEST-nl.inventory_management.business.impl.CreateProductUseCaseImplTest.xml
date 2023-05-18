@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="nl.inventory_management.business.impl.CreateProductUseCaseImplTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2023-01-13T18:29:43" hostname="Servets-Air.home" time="0.026">
+  <properties/>
+  <testcase name="createProduct_ShouldReturnProductNameAlreadyExistsException()" classname="nl.inventory_management.business.impl.CreateProductUseCaseImplTest" time="0.024"/>
+  <testcase name="createProduct_ShouldReturnUnsupportedProductFieldsException()" classname="nl.inventory_management.business.impl.CreateProductUseCaseImplTest" time="0.001"/>
+  <testcase name="createProductShouldReturnAProduct()" classname="nl.inventory_management.business.impl.CreateProductUseCaseImplTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
